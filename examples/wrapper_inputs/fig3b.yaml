@@ -1,0 +1,8 @@
+chr: IV
+range: [ 740741, 761628 ]
+nuc: true
+motifs: [ fkh2, mcm1 ]
+conc: { nuc: 40.0, unbound: 1.0, fkh2: 0.01, mcm1: 0.01 }
+inverse_temp: 1.0
+output_basename: fig3b
+output_filename: fig3b.txt

@@ -1,0 +1,8 @@
+chr: XIII
+range: [ 16419, 36930 ]
+nuc: true
+motifs: [ ]
+conc: { nuc: 40.0, unbound: 1.0 }
+inverse_temp: 1.0
+output_basename: fig2a
+output_filename: fig2a.txt

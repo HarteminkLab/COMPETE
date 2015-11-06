@@ -1,0 +1,8 @@
+chr: XIII
+range: [ 16419, 36930 ]
+nuc: true
+motifs: [ pho4, pho2, nrg1 ]
+conc: { nuc: 1.0, unbound: 1.0, pho4: 0.001, pho2: 0.03162278, nrg1: 0.01 }
+inverse_temp: 1.0
+output_basename: fig5a
+output_filename: fig5a.txt

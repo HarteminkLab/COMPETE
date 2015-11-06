@@ -1,0 +1,8 @@
+chr: II
+range: [ 267712, 289412 ]
+nuc: true
+motifs: [ gal4 ]
+conc: { nuc: 40.0, unbound: 1.0, gal4: 100.0 }
+inverse_temp: 1.0
+output_basename: fig4c
+output_filename: fig4c.txt

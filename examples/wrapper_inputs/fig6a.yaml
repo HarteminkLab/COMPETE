@@ -1,0 +1,8 @@
+chr: IV
+range: [ 452352, 473190 ]
+nuc: true
+motifs: [ abf1, orc ]
+conc: { nuc: 40.0, unbound: 1.0, abf1: 0.8, orc: 0.2 }
+inverse_temp: 1.0
+output_basename: fig6a
+output_filename: fig6a.txt

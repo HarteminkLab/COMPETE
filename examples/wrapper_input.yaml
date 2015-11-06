@@ -1,0 +1,23 @@
+# Roman numeral indicating which chromosome to run on
+chr: IV
+
+# coordinates on above chromosome on which to run; indexed starting at 1
+range: [ 740741, 761628 ]
+
+# Boolean indication of whether to include nucleosomes in this model
+nuc: true
+
+# array of DBFs (other than nucs) to include in this model
+motifs: [ fkh2, mcm1 ]
+
+# hash of concentrations of included DBFs
+conc: { nuc: 40.0, unbound: 1.0, fkh2: 0.01, mcm1: 0.01 }
+
+# inverse temperature parameter; generally left at 1.0, meaning no effect
+inverse_temp: 1.0
+
+# intermediate files will be named based on this
+output_basename: foo
+
+# if given, this will specifically define the output filename; otherwise it will be generated from the output_basename and the given DBFs and concentrations
+output_filename: foo.txt
