@@ -1,5 +1,5 @@
 ## Note
-This is code written by Todd Wasson in the Hartemink Group for the following publication:
+Current version of the code here was written by Todd Wasson in the Hartemink Group for the following publication:
 
 [Wasson, T. and Hartemink, A. J., 2009. An ensemble model of competitive multi-factor binding of the genome. Genome Res., 19(11):2101–2112.](http://www.ncbi.nlm.nih.gov/pubmed/19720867)
 
