@@ -1090,3 +1090,106 @@ void viterbi(model_def_struct *model_def, sequence_struct *sequence, PROBABILITY
   free(pairs);
   free(ptr);
 }
+
+
+
+void load_seq_pos_conc_scaler(char* file_name, float** seq_pos_conc_scaler,
+                              int sequence_length, int n_motifs, BOOL nuc_present)
+{
+    // the file that specifies the position specific conc scaler should be a csv
+    // file, delimited by \t. The first line of the file should be header.
+    // The first column should be nucleosome, and the rest should be TFs
+    FILE *in;
+    //char tmp[1024];
+    char tmp[4096];
+
+    int line_count = 0;
+    int field_parsed = 0;
+
+    in = fopen(file_name, "r");
+
+    if(in == NULL)
+    {
+        fprintf(stderr, "Can't open %s\n", file_name);
+        exit(1);
+    }
+
+    // ignore the header line
+    char* ptr = fgets(tmp, sizeof(tmp),in);
+    line_count++;
+
+    // how many filed do I expect on each line
+    int total_filed = n_motifs;
+    if(nuc_present)
+    {
+        total_filed = n_motifs + 1;
+    }
+
+    while(fgets(tmp, sizeof(tmp),in))
+    {
+        if(line_count > sequence_length)
+        {
+            fprintf(stderr, "hit line %d in file %s, but sequence length is %d\n",
+                    line_count, file_name, sequence_length);
+            exit(1);
+        }
+
+        field_parsed = parse_one_line(tmp, seq_pos_conc_scaler, line_count - 1,
+                                      total_filed);
+
+        // filed in each line should equal to the number of TFs plus nucleosome
+        //if(field_parsed != total_filed) {
+        //  fprintf(stderr, "line %d only have %d field, there should be %d\n",
+        //          line_count, field_parsed, n_motifs + 1);
+        //  exit(1);
+        //}
+
+        line_count++;
+    }
+
+    if((line_count - 1) != sequence_length)
+    {
+        fprintf(stderr, "file %s only has %d lines, but sequence length is %d\n",
+                file_name, line_count, sequence_length);
+        exit(1);
+    }
+
+    fclose(in);
+}
+
+int parse_one_line(char* line, float** matrix, int row, int total_fields)
+{
+    int field_parsed = 0;
+    //char tmp[10];
+
+    char *i, *j;
+
+    j = line;
+    i = line;
+    while(*j != '\0')
+    {
+        if(*j == '\t' || *j == '\n')
+        {
+            char tmp[j-i+1];
+            strncpy(tmp, i, (j - i));
+            // without this '\0', there would be a bug
+            tmp[j-i] = '\0';
+            if(field_parsed > total_fields)
+            {
+                fprintf(stderr, "filed number exceeds total field, %d > %d at line %d\n",
+                        field_parsed, total_fields, row + 1);
+                exit(1);
+
+            }
+            matrix[field_parsed][row] = atof(tmp);
+            //fprintf(stderr,
+            //              "TEST: At row %ld, for filed_parsed %ld, the scaling factor is %s as string and  %.12f as value\n",
+            //              row, field_parsed, tmp, matrix[field_parsed][row]);
+            field_parsed++;
+            i = j + 1;
+        }
+        j++;
+    }
+
+    return field_parsed;
+}

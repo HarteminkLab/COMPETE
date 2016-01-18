@@ -6,9 +6,19 @@
 extern char *optarg;
 extern int optind;
 
-void free_memory(model_def_struct *model_def, sequence_struct **sequence, PROBABILITY **f_table, PROBABILITY **b_table, PROBABILITY **sf, PROBABILITY **sb, PROBABILITY **sr, int n_seqs, int *motif_starts, int *motif_lens, PROBABILITY *motif_conc, int n_motifs, char **motif_names) {
+void free_memory(model_def_struct *model_def, sequence_struct **sequence,
+		PROBABILITY **f_table, PROBABILITY **b_table, PROBABILITY **sf,
+		PROBABILITY **sb, PROBABILITY **sr, int n_seqs, int *motif_starts,
+		int *motif_lens, PROBABILITY *motif_conc, int n_motifs,
+		char **motif_names, float** seq_pos_conc_scaler) {
   int i;
 
+  // ===========
+  for(i = 0; i < n_motifs + 1; i++) {
+	  free(seq_pos_conc_scaler[i]);
+  }
+  free(seq_pos_conc_scaler);
+  // ==========
   free(model_def->initial_probs);
   free(model_def->transition_matrix);
   if (model_def->n_fixed_states > 0) {
@@ -132,47 +142,47 @@ void update_a0k_probabilities(model_def_struct *model_def) {
   model_def->initial_probs[0] = sum;
 
   for (i = 0; i < n_motifs; i++) {
-    PROBABILITY p = fetch_transition_prob(model_def, distributor_index, distributor_index + i + 1);
-    for (j = motif_starts[i]; j < motif_starts[i] + 2 * motif_lens[i]; j++) {
-      model_def->initial_probs[j] = p;
-      sum += p;
-    }
+	PROBABILITY p = fetch_transition_prob(model_def, distributor_index, distributor_index + i + 1);
+	for (j = motif_starts[i]; j < motif_starts[i] + 2 * motif_lens[i]; j++) {
+	  model_def->initial_probs[j] = p;
+	  sum += p;
+	}
   }
 
   // determine if nucleosome is present
   int nuc_len = 0;
   int nuc_start = 0;
   if (find_nucleosome_states(model_def, motif_starts, motif_lens, &nuc_start, &nuc_len)) {
-    PROBABILITY p = fetch_transition_prob(model_def, distributor_index, nuc_start);
-    int n_padding_states = find_num_nucleosome_padding_states(model_def, nuc_start);
+	PROBABILITY p = fetch_transition_prob(model_def, distributor_index, nuc_start);
+	int n_padding_states = find_num_nucleosome_padding_states(model_def, nuc_start);
 
-    // left (normal) padding states
-    for (i = nuc_start; i < nuc_start + n_padding_states - 4; i++) {
-      model_def->initial_probs[i] = p;
-      sum += p;
-    }
+	// left (normal) padding states
+	for (i = nuc_start; i < nuc_start + n_padding_states - 4; i++) {
+	  model_def->initial_probs[i] = p;
+	  sum += p;
+	}
 
-    // branched padding state
-    for (i = nuc_start + n_padding_states - 4; i < nuc_start + n_padding_states; i++) {
-      model_def->initial_probs[i] = p / 4.0;
-      sum += p / 4.0;
-    }
+	// branched padding state
+	for (i = nuc_start + n_padding_states - 4; i < nuc_start + n_padding_states; i++) {
+	  model_def->initial_probs[i] = p / 4.0;
+	  sum += p / 4.0;
+	}
 
-    // tons of nucleosome states, 16 per sequence position
-    for (i = nuc_start + n_padding_states; i < nuc_start + nuc_len - n_padding_states + 3; i++) {
-      model_def->initial_probs[i] = p / 16.0;
-      sum += p / 16.0;
-    }
+	// tons of nucleosome states, 16 per sequence position
+	for (i = nuc_start + n_padding_states; i < nuc_start + nuc_len - n_padding_states + 3; i++) {
+	  model_def->initial_probs[i] = p / 16.0;
+	  sum += p / 16.0;
+	}
 
-    // right branching states, all of which are normal
-    for (i = nuc_start + nuc_len - n_padding_states + 3; i < nuc_start + nuc_len; i++) {
-      model_def->initial_probs[i] = p;
-      sum += p;
-    }
+	// right branching states, all of which are normal
+	for (i = nuc_start + nuc_len - n_padding_states + 3; i < nuc_start + nuc_len; i++) {
+	  model_def->initial_probs[i] = p;
+	  sum += p;
+	}
   }
 
   for (i = 0; i < model_def->silent_states_begin; i++) {
-    model_def->initial_probs[i] /= sum;
+	model_def->initial_probs[i] /= sum;
   }
 
   free(motif_starts);
@@ -333,14 +343,14 @@ void posterior_output_summed_states(model_def_struct *model_def, sequence_struct
 
 
 void print_usage(char **argv) {
-  fprintf(stderr, "usage: %s [options] model_file seq_file\n", basename(argv[0]));
+  fprintf(stderr, "usage: %s [options] model_file seq_file local_conc_scale_file\n", basename(argv[0]));
   fprintf(stderr, "  -n  nucleosome_concentration (float)\n");
   fprintf(stderr, "  -m  motif_concentrations (comma delimited string of floats)\n");
   fprintf(stderr, "  -N  motif_labels (comma delimited string of strings, for output file column headers)\n");
   fprintf(stderr, "  -u  unbound_concentration (float)\n");
   fprintf(stderr, "  -t  inverse_temperature (float)\n");
   fprintf(stderr, "  -s  output only probabilities of starting each DBF per postion\n");
-  fprintf(stderr, "\nexample: %s -n 1.0 -m 0.01,0.1,0.01 -u 1.0 -t 2.0 model.cfg seq_filenames.txt > output.txt\n", basename(argv[0]));
+  fprintf(stderr, "\nexample: %s -n 1.0 -m 0.01,0.1,0.01 -u 1.0 -t 2.0 model.cfg seq_filenames.txt conc_scale.csv > output.txt\n", basename(argv[0]));
 }
 
 
@@ -450,15 +460,15 @@ int main(int argc, char **argv) {
   find_motif_state_numbers(model_def, &motif_starts, &motif_lens);
   if (nuc_present = find_nucleosome_states(model_def, motif_starts, motif_lens, &nuc_start, &nuc_len)) states_len++;
 
-  fprintf(stderr, "Inverse Temp.: %f\n", T);
-  fprintf(stderr, "Unbound Conc.: %f\n", unbound_conc);
-  if (nuc_present) fprintf(stderr, "Nucleosome Conc.: %f\n", nuc_conc);
-  for (i = 0; i < n_motifs; i++)
-    fprintf(stderr, "Motif %d Conc.: %f\n", i, motif_conc[i]);
+//  fprintf(stderr, "Inverse Temp.: %f\n", T);
+//  fprintf(stderr, "Unbound Conc.: %f\n", unbound_conc);
+//  if (nuc_present) fprintf(stderr, "Nucleosome Conc.: %f\n", nuc_conc);
+//  for (i = 0; i < n_motifs; i++)
+//    fprintf(stderr, "Motif %d Conc.: %f\n", i, motif_conc[i]);
 
-  if (argc - optind > 2) {
-    if (!(model_def->output = fopen(argv[optind + 2], "w"))) {
-      fprintf(stderr, "Opening %s for writing failed.\n", argv[optind + 2]);
+  if (argc - optind > 3) {
+    if (!(model_def->output = fopen(argv[optind + 3], "w"))) {
+      fprintf(stderr, "Opening %s for writing failed.\n", argv[optind + 3]);
       exit(0);
     }
   } else {
@@ -470,18 +480,32 @@ int main(int argc, char **argv) {
   for (i = 0; i < n_motifs; i++)
     set_transition_prob(model_def, model_def->silent_states_begin, model_def->silent_states_begin + i + 1, motif_conc[i]);
 
+   // ======================================
+   // read in the sequence position specific concentration scaling factors
+   float** seq_pos_conc_scaler = ALLOC((n_motifs + 1) * sizeof(float *));
+   for(i = 0; i < n_motifs + 1; i++) {
+     seq_pos_conc_scaler[i] = ALLOC(sequence[0]->len * sizeof(float));
+   }
+   load_seq_pos_conc_scaler(argv[optind + 2], seq_pos_conc_scaler,
+						  sequence[0]->len, n_motifs, nuc_present);
+   // ======================================
+
   apply_temperature(model_def, motif_starts, motif_lens, nuc_start, nuc_len, T);
   update_a0k_probabilities(model_def);
 
-
-  fprintf(stderr, "Running forward/backward and posterior decoding.\n");
-  fb_on_all_seqs(model_def, sequence, f_table, b_table, sf, sb, n_seqs);
+  fb_on_all_seqs(model_def, sequence, f_table, b_table, sf, sb, n_seqs,
+		  seq_pos_conc_scaler,n_motifs,motif_starts,motif_lens, nuc_present);
 
   calc_sr(sf[0], sb[0], sequence[0]->len, sr[0]);
-  posterior_output_summed_states(model_def, sequence[0], f_table[0], b_table[0], sb[0], sr[0], motif_starts, motif_lens, motif_names, output_start_probs_only);
+  posterior_output_summed_states(model_def, sequence[0], f_table[0], b_table[0],
+		  sb[0], sr[0], motif_starts, motif_lens, motif_names, output_start_probs_only);
 
+//  print_forward_table(model_def, sequence[0], f_table[0], sf[0],-1);
+//  fprintf(model_def->output, "\n");
+//  print_backward_table(model_def, sequence[0], b_table[0], sb[0],-1);
   fclose(model_def->output);
-  free_memory(model_def, sequence, f_table, b_table, sf, sb, sr, n_seqs, motif_starts, motif_lens, motif_conc, n_motifs, motif_names);
+  free_memory(model_def, sequence, f_table, b_table, sf, sb, sr, n_seqs,
+		  motif_starts, motif_lens, motif_conc, n_motifs, motif_names, seq_pos_conc_scaler);
 
   return 0;
 }
