@@ -1,12 +1,3 @@
-      ============================================================
-      *                         COMPETE                          *
-      * Competitive Occupancy: Multi-factor Profile Evaluation   *
-      *                of a Thermodynamic Ensemble               *
-      *         COMPETE is licensed from Duke University.        *
-      *    Copyright (c) 2009-2020 by Alexander J. Hartemink.    *
-      *                   All rights reserved.                   *
-      ============================================================
- 
 
 ## Installation
 
