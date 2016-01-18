@@ -1,4 +1,7 @@
+
 # [COMPETE](https://users.cs.duke.edu/~amink/software/compete/)
+
+![COMPETE](https://users.cs.duke.edu/~amink/software/compete/images/compete_logo_profile_1.png)
 
 `COMPETE`: **C**ompetitive **O**ccupancy: **M**ulti-factor **P**rofile **E**valuation of a **T**hermodynamic **E**nsemble.
 
