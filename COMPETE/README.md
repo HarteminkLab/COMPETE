@@ -43,62 +43,7 @@ CPUs, but this is not required.
 
 ## Run `COMPETE`
 
-### The Easy Route: Running `COMPETE` Via Wrapper Scripts
-
-`COMPETE` is most easily run via a front-end wrapper script named `wrapper.rb` (inside `ruby_scripts` directory).
-`wrapper.rb` takes a human-readable `YAML` input file that defines the input
-parameterization as described in the following (real) example input file:
-
-```yaml
-# Roman numeral indicating which chromosome to run on
-chr: IV
-
-# coordinates on above chromosome on which to run; indexed starting at 1
-range: [ 740741, 761628 ]
-
-# Boolean indication of whether to include nucleosomes in this model
-nuc: true
-
-# array of DBFs (other than nucs) to include in this model
-motifs: [ fkh2, mcm1 ]
-
-# hash of concentrations of included DBFs
-conc: { nuc: 40.0, unbound: 1.0, fkh2: 0.01, mcm1: 0.01 }
-
-# inverse temperature parameter; generally left at 1.0, meaning no effect
-inverse_temp: 1.0
-
-# intermediate files will be named based on this
-output_basename: fig3b
-
-# if given, this will specifically define the output filename; 
-# otherwise it will be generated from the output_basename and the given DBFs and concentrations
-output_filename: fig3b.txt
-```
-
-Given this YAML file, `COMPETE` may be run as follows:
-
-```bash
-./wrapper.rb < wrapper_input.yaml
-```
-
-Note that `wrapper.rb` reads the `YAML` input from standard input.  This allows more
-adventurous users to modify elements of it on the fly if so desired.  An example
-of this will be shown below when discussing how to set concentrations as
-multiples of K<sub>d</sub>, as described in [Wasson and Hartemink, 2009](http://www.ncbi.nlm.nih.gov/pubmed/19720867).
-
-It should be noted that out of the box, `COMPETE` is configured to run on the
-yeast genome that all of the analyses in the original `COMPETE` publication were
-run on.  Configuring `COMPETE` to run on other sequences, or for other organisms,
-is described below.
-
-### The Hardcore Route: Running `COMPETE` Manually
-
-Note: Although `COMPETE` can certainly be run manually, and doing so is described
-in this section, the `wrapper.rb` front-end has become our method of choice, and
-will be the focus of examples going forward.
-
-Running `COMPETE` manually involves a few steps: creation of the model to include
+Running `COMPETE` involves a few steps: creation of the model to include
 your preferred DBFs, creation of a file containing the sequence filename and
 coordinates, and actual execution of the `COMPETE` binary executable:
 
