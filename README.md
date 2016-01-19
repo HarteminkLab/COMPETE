@@ -5,7 +5,9 @@
 
 `COMPETE`: **C**ompetitive **O**ccupancy: **M**ulti-factor **P**rofile **E**valuation of a **T**hermodynamic **E**nsemble.
 
-See installation and manual [here](https://github.com/jianlingzhong/COMPETE/tree/master/COMPETE).
+## Installation and manual 
+
+See them [here](https://github.com/jianlingzhong/COMPETE/tree/master/COMPETE).
 
 ## Version history
 
