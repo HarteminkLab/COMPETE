@@ -11,12 +11,12 @@ See them [here](https://github.com/jianlingzhong/COMPETE/blob/master/COMPETE/REA
 
 ## Version history
 
-### [Version 0.9.0](https://github.com/jianlingzhong/COMPETE/tree/v0.9.0)
+### [Version 0.9.0](https://github.com/jianlingzhong/COMPETE/releases/tag/v0.9.0)
 Written by Todd Wasson in the Hartemink Group for the following publication:
 
 [Wasson, T. and Hartemink, A. J., 2009. An ensemble model of competitive multi-factor binding of the genome. Genome Res., 19(11):2101–2112.](http://www.ncbi.nlm.nih.gov/pubmed/19720867)
 
-### Version 1.0.0
+### [Version 1.0.0](https://github.com/jianlingzhong/COMPETE/releases/tag/1.0.0)
 A new feature (position specific concentration) was added. Written by Jianling Zhong and used in 
 
 [Zhong, J., Wasson, T., & Hartemink, A. J. (2014). Learning protein–DNA interaction landscapes by integrating experimental data through computational models. Bioinformatics, 30(20), 2868-2874.](http://bioinformatics.oxfordjournals.org/content/30/20/2868)
