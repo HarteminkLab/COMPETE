@@ -125,7 +125,7 @@ coordinates, creation of a position specific scaling factor file, and actual exe
     by passing it `-h` or `--help`.
     
     All arguments are optional. If concentrations are unspecified, nucleosomes will
-    default to a concentration of `1` and all other DBFs will default to `0.01`.  Any
+    default to a concentration of `1` and all other DBFs will default to `0.01`.  An
     example run from the command line is:
     
     ```bash
@@ -192,17 +192,6 @@ plot(d[1:500, 1], type="l")
 
 The data file format should be easy enough to parse with any software you prefer
 for plotting; this is merely a simple example.
-
-
-## Example Files
-
-Several example files are included in the `examples` directory.  The input
-files required to recreate the examples in the publication figures are included
-in the `examples/wrapper_inputs` directory.
-
-To build the examples in figures 2 and 5 in [Wasson and Hartemink, 2009](http://www.ncbi.nlm.nih.gov/pubmed/19720867), the symlink from `construct_model_from_motifs.rb` to `construct_model_from_pbm_motifs.rb` must be
-pointed instead at `construct_model_from_macisaac_motifs.rb`.  This will use the
-[MacIsaac et al., 2006](https://github.com/jianlingzhong/COMPETE/edit/master/COMPETE/README.md) motifs in the included `TAMO` file.
 
 
 ## More Information
