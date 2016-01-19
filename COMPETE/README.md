@@ -45,7 +45,7 @@ CPUs, but this is not required.
 
 Running `COMPETE` involves a few steps: creation of the model to include
 your preferred DBFs, creation of a file containing the sequence filename and
-coordinates, and actual execution of the `COMPETE` binary executable:
+coordinates, creation of a position specific scaling factor file, and actual execution of the `COMPETE` binary executable:
 
 1. Creation of the Model File
 
@@ -68,7 +68,7 @@ coordinates, and actual execution of the `COMPETE` binary executable:
     ./construct_model_from_motifs.rb gal4 fkh2 > model.cfg
     ```
     
-    Valid DBF IDs can be seen by looking at the filenames in the `pbm` directory.
+    Valid DBF IDs can be seen by looking at the filenames in the [pbm](https://github.com/jianlingzhong/COMPETE/tree/master/COMPETE/pbm) directory.
 
 2. Creation of the Sequence Filenames File
 
@@ -87,13 +87,32 @@ coordinates, and actual execution of the `COMPETE` binary executable:
     run of the `convert_seq.rb` Ruby script, which is described in the section "Using
     Your Own Sequence Files".
 
-3. Executing the `COMPETE` Binary Executable
+3. Creation of position specific scaling factor file
+    
+    The concentrations of each DBF (including the nucleosome) are specified when executing the `COMPETE` binary (see next step). For a given DBF, to allow it to have a potentially different concentration at each sequence position, a `position specific scaling factor` is used. One scaling factor is specified for each DBF at each sequence position. Therefore, to run a model with `N` DBFs on a sequence of length `M`, a `N X M` scaling factor matrix must be specified. The actually concentration used for a DBF at a position is the product of the concentration provided to `COMPETE` via command line and the corresponding scaling factor at that position. This scaling factor matrix could be all 1's if no position specific concentration is needed. 
+
+    The scaling factor matrix is provided to `COMPETE` via a tab-separated file. The first line of this file should be the DBF names. The order of the DBFs should be *exactly* the same as when you create the model file in step 1. Nucleosome, if exists, should be the last one. For example, the following file could be used for the model create in the example of step 1 (with nucleosome):
+    
+    ```tsv
+    Gal4    Fkh2    Nucleosome
+    1.0     1.0     1.0
+    1.0     1.0     1.0
+    1.0     1.0     1.0
+    0.9     1.0     1.0
+    0.9     1.0     1.0
+            ...
+    0.9     1.0     1.0
+    1.0     1.0     1.0
+            ...
+    ```
+
+4. Executing the `COMPETE` Binary Executable
 
     The actual `COMPETE` binary, named `compete`, takes a collection of command line
     arguments, as follows:
     
     ```txt
-    usage: compete [options] model_file seq_file
+    usage: compete [options] model_file seq_file scaling_factor_tsv
       -n  nucleosome_concentration (float)
       -m  motif_concentrations (comma delimited string of floats)
       -N  motif_labels (comma delimited string of strings, for output file column headers)
@@ -110,7 +129,7 @@ coordinates, and actual execution of the `COMPETE` binary executable:
     example run from the command line is:
     
     ```bash
-    ./compete -n 1.0 -m 0.01,0.1,0.01 -u 1.0 -t 1.0 model.cfg seq_filenames.txt > output.txt
+    ./compete -n 1.0 -m 0.01,0.1,0.01 -u 1.0 -t 1.0 model.cfg seq_filenames.txt scaling_factors.tsv>  output.txt
     ```
     
     In this case, `nucleosome` concentration is set to `1.0`, the other three `DBF`
