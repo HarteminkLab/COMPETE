@@ -22,4 +22,8 @@ A new feature (position specific concentration) was added. Written by Jianling Z
 [Zhong, J., Wasson, T., & Hartemink, A. J. (2014). Learning protein–DNA interaction landscapes by integrating experimental data through computational models. Bioinformatics, 30(20), 2868-2874.](http://bioinformatics.oxfordjournals.org/content/30/20/2868)
 
 ## License
-`COMPETE` is licensed from Duke University. Copyright (c) 2009-2020 by Alexander J. Hartemink. All rights reserved.
+`COMPETE` is licensed from Duke University. 
+
+Copyright (c) 2009-2020 by Alexander J. Hartemink. 
+
+All rights reserved.
