@@ -7,7 +7,7 @@
 
 ## Installation and manual 
 
-See them [here](https://github.com/jianlingzhong/COMPETE/tree/master/COMPETE).
+See them [here](https://github.com/jianlingzhong/COMPETE/blob/master/COMPETE/README.md).
 
 ## Version history
 
