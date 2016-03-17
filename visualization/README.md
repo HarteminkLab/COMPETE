@@ -14,4 +14,4 @@ python example.py
 
 ```
 
-Files used in `example.py` can be found [here](https://github.com/jianlingzhong/COMPETE_examples). 
+Files used in `example.py` (and its output image) can be found [here](https://github.com/jianlingzhong/COMPETE_examples). 
