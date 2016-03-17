@@ -11,12 +11,12 @@ def find_name(x):
     info = dict([_.split('=') for _ in x.split(';')])
     return info['gene'] if 'gene' in info else info['Name']
 
-def get_orf_data(chromo, start, end, sacCer2gff = None):
+def get_orf_data(chromo, start, end, orf_annotation = None):
     
-    if sacCer2gff is None:
+    if orf_annotation is None:
         sys.exit("For ORF annotation, a GFF file needs to be provided. Such as this one: https://github.com/jianlingzhong/multivariate_compete/blob/master/pkg/mvcompete/data/genomics/saccharomyces_cerevisiae.20080621.gff")
 
-    genes = pd.read_csv(sacCer2gff, sep = '\t', comment='#', header = None)
+    genes = pd.read_csv(orf_annotation, sep = '\t', comment='#', header = None)
 
     # only need the gene features in the gff
     genes = genes.loc[genes.iloc[:, 2] == 'gene', ]

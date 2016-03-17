@@ -1,6 +1,7 @@
 
 
 import numpy as np
+import pandas as pd 
 import matplotlib.pyplot as plt
 from colors import default_dbf_color_map
 from annotation_utils import get_orf_data, get_macisaac_data
@@ -58,10 +59,10 @@ def annotate_orf(orf_start, orf_end, orf_strand, orf_name, start, end):
         plt.annotate(orf_name, ((start+orf_end)/2-10, annotate_ymin - 0.06))
 
 
-def plot_orf_annotation(chromo, start, end):
+def plot_orf_annotation(chromo, start, end, orf_annotation):
 
     #orf data
-    orf = get_orf_data(chromo, start, end)
+    orf = get_orf_data(chromo, start, end, orf_annotation)
     for i in range(orf.shape[0]):
         orf_start = orf.start.iloc[i]
         orf_end = orf.end.iloc[i]
@@ -70,9 +71,9 @@ def plot_orf_annotation(chromo, start, end):
 
         annotate_orf(orf_start, orf_end, orf_strand, orf_name, start, end)
 
-def plot_macisaac_annotation(chromo, start, end, dbf_color_map):
+def plot_macisaac_annotation(chromo, start, end, dbf_color_map, macisaac_annotation):
 
-    macisaac = get_macisaac_data(chromo, start, end)
+    macisaac = get_macisaac_data(chromo, start, end, macisaac_annotation)
     for i in range(macisaac.shape[0]):
         x = (macisaac.start.iloc[i]+macisaac.end.iloc[i])/2.0
         marker = '>' if macisaac.strand.iloc[i] == '+' else '<'
@@ -92,12 +93,15 @@ def preprocess_occupancy_profile(op, drop_threshold):
     '''process occupancy profile before plotting'''
 
     #drop columns that do not need plotting
-    drop_columns = set(['background', 'nuc_padding', 'nuc_center', 'nuc_start', 'nuc_end'])
+    drop_columns = set(['background', 'nuc_padding', 
+        'nuc_center', 'nuc_start', 'nuc_end', 'Tata'])
 
     #drop columns that have low binding prob
     drop_columns = drop_columns.union( set(op.columns[op.apply(max) < drop_threshold]))
     
-    op = op.drop(drop_columns, axis = 1)
+    for col in drop_columns:
+        if col in op:
+            op = op.drop(col, axis = 1)
 
     return op
 
@@ -122,8 +126,11 @@ def plot_dbf_binding(op, dbf_color_map):
         plt.plot(op.coordinate, op.loc[:, dbf], color = dbf_color_map[dbf], label = dbf)
         plt.fill_between(op.coordinate, op.loc[:, dbf], color = dbf_color_map[dbf])
 
-def plot_occupancy_profile(op, chromo, coordinate_start, padding = 0, threshold = 0.1,
-    figsize=(18,4), annotate_orf = True, annotate_macisaac = True, file_name = None, dbf_color_map = default_dbf_color_map):
+def read_occupancy_profile(file_name):
+
+    return pd.read_csv(file_name, sep = '\t')
+
+def plot_occupancy_profile(op, chromo, coordinate_start, padding = 0, threshold = 0.1, figsize=(18,6), orf_annotation = None, macisaac_annotation = None, file_name = None, dbf_color_map = default_dbf_color_map):
     
     plt.figure(figsize=figsize)
 
@@ -135,16 +142,19 @@ def plot_occupancy_profile(op, chromo, coordinate_start, padding = 0, threshold 
     #plot DBFs using area plot
     plot_dbf_binding(op, dbf_color_map)
     
-    if annotate_orf:
-        plot_orf_annotation(chromo, op.coordinate.iloc[0], op.coordinate.iloc[-1])
+    if orf_annotation is not None:
+        plot_orf_annotation(chromo, op.coordinate.iloc[0], op.coordinate.iloc[-1], orf_annotation)
 
-    if annotate_macisaac:
-        plot_macisaac_annotation(chromo, op.coordinate.iloc[0], op.coordinate.iloc[-1], dbf_color_map=dbf_color_map)        
+    if macisaac_annotation is not None:
+        plot_macisaac_annotation(chromo, op.coordinate.iloc[0], 
+            op.coordinate.iloc[-1], dbf_color_map=dbf_color_map,
+             macisaac_annotation=macisaac_annotation)
 
     #######################  set axis properties #######################
     plt.xlim(op.coordinate.iloc[0]-op.shape[0]/100.0, op.coordinate.iloc[-1] + op.shape[0]/100.0)
 
-    if annotate_orf or annotate_macisaac:
+    if orf_annotation is not None or\
+        macisaac_annotation is not None:
         # draw an annotation line
         plt.hlines(annotate_ymax, plt.xlim()[0], plt.xlim()[1], linewidth=2, color='orange')
 
@@ -177,7 +187,10 @@ def plot_occupancy_profile(op, chromo, coordinate_start, padding = 0, threshold 
     ax.xaxis.set_ticks_position('bottom')
 
     plt.xlabel('Chr %d' % chromo)
-    # if file_name is None:
-    #     plt.show()
-    # else:
-    #     plt.savefig(file_name)
+
+    if file_name is None:
+        plt.show()
+    else:
+        plt.savefig(file_name)
+
+

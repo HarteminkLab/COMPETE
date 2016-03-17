@@ -37,3 +37,6 @@ libconfig-1.1
 
 # compiled binary
 compete
+
+# compiled python file
+*.pyc
