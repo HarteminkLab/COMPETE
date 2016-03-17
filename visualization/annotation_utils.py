@@ -14,7 +14,7 @@ def find_name(x):
 def get_orf_data(chromo, start, end, orf_annotation = None):
     
     if orf_annotation is None:
-        sys.exit("For ORF annotation, a GFF file needs to be provided. Such as this one: https://github.com/jianlingzhong/multivariate_compete/blob/master/pkg/mvcompete/data/genomics/saccharomyces_cerevisiae.20080621.gff")
+        sys.exit("For ORF annotation, a GFF file needs to be provided. Such as this one: https://github.com/jianlingzhong/COMPETE_examples/blob/master/saccharomyces_cerevisiae.20080621.gff")
 
     genes = pd.read_csv(orf_annotation, sep = '\t', comment='#', header = None)
 
@@ -42,7 +42,7 @@ def get_macisaac_data(chromo, start, end, macisaac_file = None):
     '''read the macisaac binding sites data. currently only data with p-value 0.05 and conservation level 2 is included'''
 
     if macisaac_file is None:
-        sys.exit("For Macisaac binding sites annotation, a supplemental file from Macisaac et al. needs to be provided. Such as this one: https://github.com/jianlingzhong/multivariate_compete/blob/master/pkg/mvcompete/data/genomics/macisaac_p005_c2.csv")
+        sys.exit("For Macisaac binding sites annotation, a supplemental file from Macisaac et al. needs to be provided. Such as this one: https://github.com/jianlingzhong/COMPETE_examples/blob/master/macisaac_p005_c2.csv")
 
     binding = pd.read_csv(macisaac_file, sep = '\t')
     binding = binding.loc[binding.chromo == chromo]
