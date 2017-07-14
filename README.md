@@ -12,7 +12,7 @@ See them [here](https://github.com/jianlingzhong/COMPETE/blob/master/COMPETE/REA
 ## Version history
 
 ### [Version 0.9.0](https://github.com/jianlingzhong/COMPETE/releases/tag/v0.9.0)
-Written by [Todd Wasson](http://people.llnl.gov/wasson3) in the Hartemink Group for the following publication:
+Written by [Todd Wasson](https://www.linkedin.com/in/toddwasson/) in the Hartemink Group for the following publication:
 
 [Wasson, T. and Hartemink, A. J., 2009. An ensemble model of competitive multi-factor binding of the genome. Genome Res., 19(11):2101–2112.](http://www.ncbi.nlm.nih.gov/pubmed/19720867)
 
